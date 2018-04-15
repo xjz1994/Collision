@@ -1,4 +1,4 @@
-export class QuadTree<T> {
+export class QuadTree {
 
     private root = null;
 
@@ -27,7 +27,7 @@ export class QuadTree<T> {
         this.root.clear();
     }
 
-    public retrieve(item): Array<T> {
+    public retrieve(item) {
         var out = this.root.retrieve(item).slice(0);
         return out;
     }
@@ -74,31 +74,7 @@ export class Node {
     public insert(item) {
         if (this.nodes.length) {
             var index = this._findIndex(item);
-
             this.nodes[index].insert(item);
-
-            return;
-        }
-
-        this.children.push(item);
-
-        var len = this.children.length;
-        if (!(this._depth >= this._maxDepth) &&
-            len > this._maxChildren) {
-
-            this.subdivide();
-
-            var i;
-            for (i = 0; i < len; i++) {
-                this.insert(this.children[i]);
-            }
-
-            this.children.length = 0;
-        } if (this.nodes.length) {
-            var index = this._findIndex(item);
-
-            this.nodes[index].insert(item);
-
             return;
         }
 
@@ -131,8 +107,10 @@ export class Node {
 
     public _findIndex(item) {
         var b = this._bounds;
-        var left = (item.x > b.x + b.width / 2) ? false : true;
-        var top = (item.y > b.y + b.height / 2) ? false : true;
+        // var left = (item.x > b.x + b.width / 2) ? false : true;
+        // var top = (item.y > b.y + b.height / 2) ? false : true;
+        let left = (item.x < 0) ? true : false;
+        let top = (item.y > 0) ? true : false;
 
         //top left
         var index = Node.TOP_LEFT;
@@ -152,26 +130,25 @@ export class Node {
                 index = Node.BOTTOM_RIGHT;
             }
         }
-
         return index;
     }
 
     public subdivide() {
         var depth = this._depth + 1;
 
-        var bx = this._bounds.x;
-        var by = this._bounds.y;
+        // var bx = this._bounds.x;
+        // var by = this._bounds.y;
 
-        //floor the values
+        // //floor the values
         var b_w_h = (this._bounds.width / 2); //todo: Math.floor?
         var b_h_h = (this._bounds.height / 2);
-        var bx_b_w_h = bx + b_w_h;
-        var by_b_h_h = by + b_h_h;
+        // var bx_b_w_h = bx + b_w_h;
+        // var by_b_h_h = by + b_h_h;
 
         //top left
         this.nodes[Node.TOP_LEFT] = new Node({
-            x: bx,
-            y: by,
+            x: -b_w_h,
+            y: b_h_h,
             width: b_w_h,
             height: b_h_h
         },
@@ -179,8 +156,8 @@ export class Node {
 
         //top right
         this.nodes[Node.TOP_RIGHT] = new Node({
-            x: bx_b_w_h,
-            y: by,
+            x: 0,
+            y: b_w_h,
             width: b_w_h,
             height: b_h_h
         },
@@ -188,8 +165,8 @@ export class Node {
 
         //bottom left
         this.nodes[Node.BOTTOM_LEFT] = new Node({
-            x: bx,
-            y: by_b_h_h,
+            x: -b_w_h,
+            y: 0,
             width: b_w_h,
             height: b_h_h
         },
@@ -198,8 +175,8 @@ export class Node {
 
         //bottom right
         this.nodes[Node.BOTTOM_RIGHT] = new Node({
-            x: bx_b_w_h,
-            y: by_b_h_h,
+            x: 0,
+            y: 0,
             width: b_w_h,
             height: b_h_h
         },
@@ -235,10 +212,16 @@ export class BoundsNode extends Node {
             var node = this.nodes[index];
 
             //todo: make _bounds bounds
-            if (item.x >= node._bounds.x &&
-                item.x + item.width <= node._bounds.x + node._bounds.width &&
-                item.y >= node._bounds.y &&
-                item.y + item.height <= node._bounds.y + node._bounds.height) {
+            var b_w_h = (node._bounds.width / 2);
+            var b_h_h = (node._bounds.height / 2);
+            let minX = node._bounds.x - b_w_h;
+            let maxX = node._bounds.x + b_w_h;
+            let minY = node._bounds.y - b_h_h;
+            let maxY = node._bounds.y + b_h_h;
+            if (item.x - item.anchorX * item.width >= minX &&
+                item.x + item.anchorX * item.width <= maxX &&
+                item.y - item.anchorY * item.height >= minY &&
+                item.y + item.anchorY * item.height <= maxY) {
 
                 this.nodes[index].insert(item);
 
@@ -278,10 +261,16 @@ export class BoundsNode extends Node {
             var index = this._findIndex(item);
             var node = this.nodes[index];
 
-            if (item.x >= node._bounds.x &&
-                item.x + item.width <= node._bounds.x + node._bounds.width &&
-                item.y >= node._bounds.y &&
-                item.y + item.height <= node._bounds.y + node._bounds.height) {
+            var b_w_h = (node._bounds.width / 2);
+            var b_h_h = (node._bounds.height / 2);
+            let minX = node._bounds.x - b_w_h;
+            let maxX = node._bounds.x + b_w_h;
+            let minY = node._bounds.y - b_h_h;
+            let maxY = node._bounds.y + b_h_h;
+            if (item.x - item.anchorX * item.width >= minX &&
+                item.x + item.anchorX * item.width <= maxX &&
+                item.y - item.anchorY * item.height >= minY &&
+                item.y + item.anchorY * item.height <= maxY) {
 
                 out.push.apply(out, this.nodes[index].retrieve(item));
             } else {

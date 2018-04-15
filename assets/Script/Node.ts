@@ -16,15 +16,25 @@ export default class NewClass extends cc.Component {
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
+    public isCollision: boolean = false;
 
     start() {
-        this.node.x = cc.randomMinus1To1() * cc.Canvas.instance.node.width / 2;
-        this.node.y = cc.randomMinus1To1() * cc.Canvas.instance.node.height / 2;
+        this.node.x = cc.random0To1() * cc.Canvas.instance.node.width / 2;
+        this.node.y = cc.random0To1() * cc.Canvas.instance.node.height / 2;
     }
 
     update(dt) {
         let speed = 3;
         this.node.x += cc.randomMinus1To1() * speed;
         this.node.y += cc.randomMinus1To1() * speed;
+    }
+
+    public setIsCollision(isCollision) {
+        this.isCollision = isCollision;
+        if (isCollision) {
+            this.node.color = cc.color(255, 0, 0);
+        } else {
+            this.node.color = cc.color(255, 255, 255);
+        }
     }
 }

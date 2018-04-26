@@ -29,7 +29,7 @@ export default class NewClass extends cc.Component {
         }
         this.tree = new QuadTree(bounds, true);
 
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 150; i++) {
             let newNode = cc.instantiate(this.nodePrefab);
             this.node.addChild(newNode);
             this.nodes.push(newNode);
@@ -77,14 +77,14 @@ export default class NewClass extends cc.Component {
     }
 
     isCollision(node1, node2) {
-        let node1LeftTopX = node1.x - node1.width / 2;
-        let node2LeftTopX = node2.x - node2.width / 2;
-        let node1LeftTopY = node1.y - node1.height / 2;
-        let node2LeftTopY = node2.y - node2.height / 2;
+        let node1Left = node1.x;
+        let node2Left = node2.x;
+        let node1Top = node1.y - node1.height;
+        let node2Top = node2.y - node2.height;
 
-        return node1LeftTopX < node2LeftTopX + node2.width &&
-            node1LeftTopX + node1.width > node2LeftTopX &&
-            node1LeftTopY < node2LeftTopY + node2.height &&
-            node1.height + node1LeftTopY > node2LeftTopY
+        return node1Left < node2Left + node2.width &&
+            node1Left + node1.width > node2Left &&
+            node1Top < node2Top + node2.height &&
+            node1Top + node1.height > node2Top
     }
 }

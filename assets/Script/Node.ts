@@ -19,14 +19,14 @@ export default class NewClass extends cc.Component {
     public isCollision: boolean = false;
 
     start() {
-        this.node.x = cc.random0To1() * cc.Canvas.instance.node.width / 2;
-        this.node.y = cc.random0To1() * cc.Canvas.instance.node.height / 2;
+        this.node.x = cc.random0To1() * cc.Canvas.instance.node.width;
+        this.node.y = cc.random0To1() * cc.Canvas.instance.node.height;
     }
 
     update(dt) {
-        let speed = 3;
-        this.node.x += cc.randomMinus1To1() * speed;
-        this.node.y += cc.randomMinus1To1() * speed;
+        // let speed = 3;
+        // this.node.x += cc.randomMinus1To1() * speed;
+        // this.node.y += cc.randomMinus1To1() * speed;
     }
 
     public setIsCollision(isCollision) {
